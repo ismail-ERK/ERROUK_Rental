@@ -4,9 +4,11 @@ import com.example.location_voitures.dtos.LocationDto;
 import com.example.location_voitures.dtos.payment.CustomerData;
 import com.example.location_voitures.entities.CustomerEntity;
 import com.example.location_voitures.entities.LocationEntity;
+import com.example.location_voitures.entities.PaymentEntity;
 import com.example.location_voitures.entities.VoitureEntity;
 import com.example.location_voitures.exception.EntityNotFoundException;
 import com.example.location_voitures.repositories.CustomerRepository;
+import com.example.location_voitures.repositories.PaymentRepository;
 import com.example.location_voitures.repositories.VoitureRepository;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -37,10 +39,13 @@ public class CreatePayment {
     CustomerRepository customerRepository;
     @Autowired
     VoitureRepository voitureRepository;
+    @Autowired
+    PaymentRepository paymentRepository;
 
     public LocationEntity createCustomerWithPayment(LocationDto locationDto, CustomerData data, String stripeKey) throws StripeException {
         LocationEntity locationEntity = mapper.map(locationDto, LocationEntity.class);
         VoitureEntity voiture = voitureRepository.findById(locationDto.getVoitureId());
+        PaymentEntity paymentEntity = new PaymentEntity();
         if (voiture == null) throw new EntityNotFoundException("Voiture not found !!");
         long difference_In_Time
                 = locationDto.getDate_fin().getTime() - locationDto.getDate_debut().getTime();
@@ -75,7 +80,9 @@ public class CreatePayment {
                     .setCustomer(customer1.getId())
                     .build();
             PaymentIntent intent = PaymentIntent.create(createParams);
-
+            paymentEntity.setCurrency(data.getCurrency());
+            paymentEntity.setAmount(ammont);
+            PaymentEntity paymentEntity1 = paymentRepository.save(paymentEntity);
             System.out.println(data);
         }else {
             PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
@@ -84,7 +91,9 @@ public class CreatePayment {
                     .setCustomer(customer.getCustomerID())
                     .build();
             PaymentIntent intent = PaymentIntent.create(createParams);
-
+            paymentEntity.setCurrency(data.getCurrency());
+            paymentEntity.setAmount(ammont);
+            PaymentEntity paymentEntity1 = paymentRepository.save(paymentEntity);
             System.out.println(data);
         }
         return locationEntity;

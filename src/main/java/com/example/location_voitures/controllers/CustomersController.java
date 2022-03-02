@@ -41,6 +41,6 @@ public class CustomersController {
     @DeleteMapping("/{id}")
     ResponseEntity<String> seleteOneCustomers(@PathVariable("id") long id) {
         customerService.deleteCustomer(id);
-        return new ResponseEntity<String>("Customer has deleted !!", HttpStatus.OK);
+        return new ResponseEntity<String>("Customer has deleted !!", HttpStatus.NO_CONTENT);
     }
 }

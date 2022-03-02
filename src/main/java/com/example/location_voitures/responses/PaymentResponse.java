@@ -1,4 +1,4 @@
-package com.example.location_voitures.dtos.payment;
+package com.example.location_voitures.responses;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PaymentDto {
+public class PaymentResponse {
     long id;
     double amount;
     String currency;
