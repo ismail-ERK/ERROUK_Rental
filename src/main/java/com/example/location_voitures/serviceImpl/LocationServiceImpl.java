@@ -5,9 +5,12 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import com.example.location_voitures.dtos.LocationDto;
 import com.example.location_voitures.dtos.payment.CustomerData;
 import com.example.location_voitures.entities.CleCompose.LigneLocationKey;
+import com.example.location_voitures.entities.CustomerEntity;
 import com.example.location_voitures.entities.LocationEntity;
 import com.example.location_voitures.entities.VoitureEntity;
 import com.example.location_voitures.exception.EntityNotFoundException;
+import com.example.location_voitures.hard_code.CreatePayment;
+import com.example.location_voitures.repositories.CustomerRepository;
 import com.example.location_voitures.repositories.LocationRepository;
 import com.example.location_voitures.repositories.VoitureRepository;
 import com.example.location_voitures.services.LocationSevice;
@@ -37,6 +40,10 @@ public class LocationServiceImpl implements LocationSevice {
     LocationRepository locationRepository;
     @Autowired
     VoitureRepository voitureRepository;
+    @Autowired
+    CustomerRepository customerRepository;
+    @Autowired
+    CreatePayment createPayment;
 
     @Override
     public List<LocationDto> getAllLocations() {
@@ -59,50 +66,7 @@ public class LocationServiceImpl implements LocationSevice {
 
     @Override
     public LocationDto setOneLocations(LocationDto locationDto, CustomerData data) throws StripeException {
-        LocationEntity locationEntity = mapper.map(locationDto, LocationEntity.class);
-        VoitureEntity voiture = voitureRepository.findById(locationDto.getVoitureId());
-        if (voiture == null) throw new EntityNotFoundException("Voiture not found !!");
-        long difference_In_Time
-                = locationDto.getDate_fin().getTime() - locationDto.getDate_debut().getTime();
-        long difference_In_Years
-                = TimeUnit
-                .MILLISECONDS
-                .toDays(difference_In_Time)
-                % 365;
-
-        //get Ammount
-        double ammont = (difference_In_Years + 1) * voiture.getPrixJour();
-        System.out.println(ammont);
-        // Payment Instructions
-        Stripe.apiKey = stripeKey;
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", data.getName());
-        params.put("email", data.getEmail());
-        Customer customer = Customer.create(params);
-        data.setCustomerID(customer.getId());
-//        Map<String, Object> charges= new HashMap<>();
-//        params.put("currency", data.getCurrency());
-//        params.put("amount", ammont);
-//        params.put("source", "tok_mastercard");
-//        params.put("card", new Card());
-//        params.put("customer", customer.getId());
-//        Charge charge = Charge.create(charges);
-//        data.setChargeId(charge.getId());
-
-
-        PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
-                .setAmount((long) ammont*100)
-                .setCurrency(data.getCurrency())
-                .setCustomer(customer.getId())
-                .build();
-        PaymentIntent intent = PaymentIntent.create(createParams);
-
-        System.out.println(data);
-
-
-        //if payment has done succesfully
-
-
+        LocationEntity locationEntity = createPayment.createCustomerWithPayment(locationDto, data, stripeKey);
         LocationEntity locationEntity1 = locationRepository.save(locationEntity);
         LocationDto locationDto1 = mapper.map(locationEntity1, LocationDto.class);
         return locationDto1;
