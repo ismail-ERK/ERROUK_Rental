@@ -14,4 +14,6 @@ public class CustomerData {
     String name;
     String email;
     String customerID;
+    String chargeId;
+    String currency;
 }
