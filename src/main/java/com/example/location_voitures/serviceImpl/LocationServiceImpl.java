@@ -60,6 +60,9 @@ public class LocationServiceImpl implements LocationSevice {
     public LocationDto getOneLocations(long userId, long voitureId) {
         LigneLocationKey ligneLocationKey = new LigneLocationKey(userId, voitureId);
         LocationEntity locationEntity = locationRepository.findByLocationId(ligneLocationKey);
+        if(locationEntity == null) {
+            throw new EntityNotFoundException("Location not found !!!");
+        }
         LocationDto locationDto = mapper.map(locationEntity, LocationDto.class);
         return locationDto;
     }
@@ -87,7 +90,7 @@ public class LocationServiceImpl implements LocationSevice {
             LocationDto locationDto1 = mapper.map(locationEntity1, LocationDto.class);
             return locationDto1;
         } else {
-            throw new PropertyNotFoundException("Location not found !!!!");
+            throw new EntityNotFoundException("Location not found !!!!");
         }
     }
 
@@ -98,7 +101,7 @@ public class LocationServiceImpl implements LocationSevice {
         if (locationEntity != null) {
             locationRepository.delete(locationEntity);
         } else {
-            throw new PropertyNotFoundException("Location not found !!!!");
+            throw new EntityNotFoundException("Location not found !!!!");
         }
     }
 }

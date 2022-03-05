@@ -4,6 +4,7 @@ import com.example.location_voitures.dtos.CategoryDto;
 import com.example.location_voitures.dtos.UserDto;
 import com.example.location_voitures.entities.CategoryEntity;
 import com.example.location_voitures.entities.UserEntity;
+import com.example.location_voitures.exception.EntityNotFoundException;
 import com.example.location_voitures.repositories.CategoryRepository;
 import com.example.location_voitures.services.CategoryService;
 import org.modelmapper.ModelMapper;
@@ -32,16 +33,17 @@ public class categoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getOneCategories(long id) {
         CategoryEntity category = categoryRepository.findById(id);
-        CategoryDto dto = mapper.map(category, CategoryDto.class);
-        return dto;
+        if(category==null){
+            throw new EntityNotFoundException(" Category Not found");
+        }
+        return mapper.map(category, CategoryDto.class);
     }
 
     @Override
     public CategoryDto setOneCategories(CategoryDto categoryDto) {
         CategoryEntity category = mapper.map(categoryDto, CategoryEntity.class);
         CategoryEntity category1 = categoryRepository.save(category);
-        CategoryDto dto = mapper.map(category1, CategoryDto.class);
-        return dto;
+        return mapper.map(category1, CategoryDto.class);
     }
 
     @Override
@@ -51,10 +53,9 @@ public class categoryServiceImpl implements CategoryService {
             category.setImage(categoryDto.getImage());
             category.setNom(categoryDto.getNom());
             CategoryEntity category1 = categoryRepository.save(category);
-            CategoryDto dto = mapper.map(category1, CategoryDto.class);
-            return dto;
+            return mapper.map(category1, CategoryDto.class);
         }else {
-            throw new PropertyNotFoundException("Not found");
+            throw new EntityNotFoundException(" Category Not found");
         }
     }
 

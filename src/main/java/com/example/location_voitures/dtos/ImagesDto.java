@@ -16,5 +16,4 @@ public class ImagesDto {
     private long id;
     private String type;
     private String url;
-    private VoitureEntity voiture;
 }

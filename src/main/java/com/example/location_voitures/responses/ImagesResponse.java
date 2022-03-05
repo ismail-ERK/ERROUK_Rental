@@ -12,5 +12,4 @@ public class ImagesResponse {
     private long id;
     private String type;
     private String url;
-    private VoitureEntity voiture;
 }

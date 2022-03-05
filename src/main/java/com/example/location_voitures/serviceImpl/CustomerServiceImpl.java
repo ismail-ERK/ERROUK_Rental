@@ -33,8 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDto getOneCustomer(long id) {
         CustomerEntity customer = customerRepository.findById(id);
         if(customer == null) throw new EntityNotFoundException("Customer not found");
-        CustomerDto customerDto = mapper.map(customer, CustomerDto.class);
-        return customerDto;
+        return mapper.map(customer, CustomerDto.class);
     }
 
     @Override

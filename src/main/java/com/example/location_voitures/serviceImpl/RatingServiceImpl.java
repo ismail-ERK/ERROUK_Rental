@@ -3,6 +3,7 @@ package com.example.location_voitures.serviceImpl;
 import com.example.location_voitures.dtos.RatingDto;
 import com.example.location_voitures.entities.CleCompose.RatingId;
 import com.example.location_voitures.entities.RatingEntity;
+import com.example.location_voitures.exception.EntityNotFoundException;
 import com.example.location_voitures.repositories.RatingRepository;
 import com.example.location_voitures.services.RatingService;
 import org.modelmapper.ModelMapper;
@@ -35,6 +36,9 @@ public class RatingServiceImpl implements RatingService {
     public RatingDto getOneRating(long userId, long voitureId) {
         RatingId ratingId = new RatingId(userId, voitureId);
         RatingEntity entities = ratingRepository.findByRatingId(ratingId);
+        if(entities == null ){
+            throw new EntityNotFoundException("Rating not found !!!");
+        }
         RatingDto ratingDto = mapper.map(entities, RatingDto.class);
 
         return ratingDto;
@@ -59,7 +63,7 @@ public class RatingServiceImpl implements RatingService {
             RatingDto ratingDto1 = mapper.map(rating1, RatingDto.class);
             return ratingDto1;
         }else {
-            throw new PropertyNotFoundException("Rating not found !!");
+            throw new EntityNotFoundException("Rating not found !!");
         }
     }
 
@@ -70,7 +74,7 @@ public class RatingServiceImpl implements RatingService {
         if(rating != null){
             ratingRepository.delete(rating);
         }else {
-            throw new PropertyNotFoundException("Rating not found !!");
+            throw new EntityNotFoundException("Rating not found !!");
         }
     }
 }

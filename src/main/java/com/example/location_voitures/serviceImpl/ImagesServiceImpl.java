@@ -2,6 +2,7 @@ package com.example.location_voitures.serviceImpl;
 
 import com.example.location_voitures.dtos.ImagesDto;
 import com.example.location_voitures.entities.ImagesEntity;
+import com.example.location_voitures.exception.EntityNotFoundException;
 import com.example.location_voitures.repositories.ImagesRepository;
 import com.example.location_voitures.repositories.VoitureRepository;
 import com.example.location_voitures.services.ImagesService;
@@ -45,6 +46,9 @@ public class ImagesServiceImpl implements ImagesService {
     @Override
     public ImagesDto getOneImage(long id) {
         ImagesEntity imagesEntity = imagesRepository.findById(id);
+        if (imagesEntity == null ){
+            throw new EntityNotFoundException("Image nt found !!!");
+        }
         ImagesDto imagesDto = mapper.map(imagesEntity, ImagesDto.class);
         return imagesDto;
     }
@@ -71,7 +75,7 @@ public class ImagesServiceImpl implements ImagesService {
                 }
             }
             else {
-                throw new PropertyNotFoundException("Not found");
+                throw new EntityNotFoundException("Image Not found !!!!");
             }
             return null;
         }catch (Exception e){
@@ -85,7 +89,7 @@ public class ImagesServiceImpl implements ImagesService {
         if(imagesEntity!=null){
             imagesRepository.delete(imagesEntity);
         }else {
-            throw new PropertyNotFoundException("Not found");
+            throw new EntityNotFoundException("Image Not found !!!!");
         }
     }
 }

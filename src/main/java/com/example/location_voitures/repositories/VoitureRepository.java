@@ -13,4 +13,13 @@ public interface VoitureRepository extends JpaRepository<VoitureEntity, Long> {
     List<VoitureEntity> findByAgence_Id(long id);
 
     VoitureEntity findById(long id);
+
+    @Query(value = "select distinct v.couleur from VoitureEntity v")
+    List<String> getAllColors();
+    @Query(value = "select distinct v.marque from VoitureEntity v")
+    List<String> getAllMarques();
+    @Query(value = "select distinct v.modele from VoitureEntity v")
+    List<String> getAllModels();
+    @Query(value = "select distinct v.transmission from VoitureEntity v")
+    List<String> getAllTransmissions();
 }

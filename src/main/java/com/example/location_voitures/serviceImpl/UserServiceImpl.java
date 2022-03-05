@@ -2,6 +2,7 @@ package com.example.location_voitures.serviceImpl;
 
 import com.example.location_voitures.dtos.UserDto;
 import com.example.location_voitures.entities.UserEntity;
+import com.example.location_voitures.exception.EntityNotFoundException;
 import com.example.location_voitures.repositories.UserRepository;
 import com.example.location_voitures.services.UserSevice;
 import com.example.location_voitures.enums.UserRole;
@@ -31,6 +32,9 @@ public class UserServiceImpl implements UserSevice {
     @Override
     public UserDto getOneUser(long id) {
         UserEntity user = userRepository.findById(id);
+        if (user == null){
+            throw new EntityNotFoundException("User not found !!!");
+        }
         UserDto userDto = mapper.map(user,UserDto.class);
         return userDto;
     }
@@ -47,6 +51,10 @@ public class UserServiceImpl implements UserSevice {
     @Override
     public UserDto updateOneUser(long id, UserDto userDto) {
         UserEntity userEntity = userRepository.findById(id);
+
+        if (userEntity == null){
+            throw new EntityNotFoundException("User not found !!!");
+        }
         if(userDto.getEmail()!=null){
             userEntity.setEmail(userDto.getEmail());
         }
@@ -74,6 +82,11 @@ public class UserServiceImpl implements UserSevice {
 
     @Override
     public void deleteOneUser(long id) {
-                userRepository.deleteById(id);
+                UserEntity user = userRepository.findById(id);
+
+        if (user == null){
+            throw new EntityNotFoundException("User not found !!!");
+        }
+                userRepository.delete(user);
     }
 }
